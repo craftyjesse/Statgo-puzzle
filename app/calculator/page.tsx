@@ -12,7 +12,7 @@ const Calculator = () => {
   const [modifierTwo, setModifierTwo] = useState<Modifier>();
   const [modifierThree, setModifierThree] = useState<Modifier>();
 
-  const blockedCodes = ['LMTS'];
+  const blockedTypes = ['LMTS'];
 
   const fetchCode = async () => {
     const response = await fetch(`/code`);
@@ -22,7 +22,7 @@ const Calculator = () => {
       setCode(json);
       
       setFilteredModifiers(
-        json.modifiers.filter((m: { modifier_code: string; }) => blockedCodes.indexOf(m.modifier_code))
+        json.modifiers.filter((m: { modifier_type: string; }) => blockedTypes.indexOf(m.modifier_type))
       );
     }
   };
