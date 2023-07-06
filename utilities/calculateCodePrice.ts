@@ -8,7 +8,6 @@ export const calculateCodePrice = ({
   modifiers,
 }: CalculateCodePriceProps) => {
   // this is a fake price calculator
-
   return (
     code.amount +
     modifiers.reduce((final, modifier) => final + modifier.amount, 0)

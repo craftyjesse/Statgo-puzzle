@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import { useState, PropsWithChildren } from "react";
 import {
   FormControl,
   Select,
@@ -13,9 +13,13 @@ type ModifierChooserProps = PropsWithChildren<{
 export const ModiferChooser = ({
   children,
   modifiers,
+  onChange
 }: ModifierChooserProps) => {
-  const handleOnChange = ({ target: { value } }: SelectChangeEvent<number>) =>
-    modifiers.filter(({ id }) => id === value)[0];
+  const [value, setValue] = useState(null);
+
+  const handleOnChange = ({ target: { value } }: SelectChangeEvent<number>) => {
+    if (onChange) onChange(modifiers.filter(({ id }) => id === value)[0]);
+  }
   return (
     <FormControl>
       <Select label={children} onChange={handleOnChange}>

@@ -7,19 +7,44 @@ import { useEffect, useState } from "react";
 
 const Calculator = () => {
   const [code, setCode] = useState<Code>();
-  const [modifiers, setModifiers] = useState<Modifier[]>([]);
+  const [filteredModifiers, setFilteredModifiers] = useState<Modifier[]>([]);
+  const [modifierOne, setModifierOne] = useState<Modifier>();
+  const [modifierTwo, setModifierTwo] = useState<Modifier>();
+  const [modifierThree, setModifierThree] = useState<Modifier>();
+
+  const blockedCodes = ['LMTS'];
 
   const fetchCode = async () => {
-    const response = await fetch(`/api/code`);
-    setCode(await response.json());
+    const response = await fetch(`/code`);
+    let json = await response.json();
+
+    if (json && json.modifiers) {
+      setCode(json);
+      
+      setFilteredModifiers(
+        json.modifiers.filter((m: { modifier_code: string; }) => blockedCodes.indexOf(m.modifier_code))
+      );
+    }
   };
 
   useEffect(() => {
     fetchCode();
   }, []);
 
-  const finalPrice =
-    code && modifiers ? calculateCodePrice({ code, modifiers }) : 0;
+  const updatePrice = () => {
+    if (code) {
+      let selectedMods:Modifier[] = [];
+
+      if (modifierOne) selectedMods.push(modifierOne);      
+      if (modifierTwo) selectedMods.push(modifierTwo);
+      if (modifierThree) selectedMods.push(modifierThree);
+
+      return calculateCodePrice({ code:code, modifiers:selectedMods}).toFixed(2);
+    }
+
+    else return 0;
+  }
+  const finalPrice = updatePrice();
 
   return (
     <main className="">
@@ -58,17 +83,17 @@ const Calculator = () => {
 
       <Grid container spacing={2}>
         <Grid item xs={4}>
-          <ModiferChooser modifiers={code?.modifiers || []}>
+          <ModiferChooser modifiers={filteredModifiers || []} onChange={setModifierOne}>
             Modifier 1
           </ModiferChooser>
         </Grid>
         <Grid item xs={4}>
-          <ModiferChooser modifiers={code?.modifiers || []}>
+          <ModiferChooser modifiers={modifierOne ? (filteredModifiers || []) : []} onChange={setModifierTwo}>
             Modifier 2
           </ModiferChooser>
         </Grid>
         <Grid item xs={4}>
-          <ModiferChooser modifiers={code?.modifiers || []}>
+          <ModiferChooser modifiers={modifierTwo ? (filteredModifiers || []) : []} onChange={setModifierThree}>
             Modifier 3
           </ModiferChooser>
         </Grid>
